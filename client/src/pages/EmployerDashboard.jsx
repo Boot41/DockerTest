@@ -1,24 +1,20 @@
-import React from 'react';
-import Header from './Header';
-import JobPostingForm from './JobPostingForm';
-import JobListingManager from './JobListingManager';
-import Footer from './Footer';
-
 const EmployerDashboard = () => {
-    return (
-        <div className="flex flex-col min-h-screen bg-white">
-            <Header className="sticky top-0 shadow-md" />
-            <main className="flex-grow p-4 md:flex md:flex-col">
-                <div className="mb-4">
-                    <JobPostingForm className="bg-gray-100 p-4 rounded-md shadow" />
-                </div>
-                <div className="mt-4">
-                    <JobListingManager className="bg-gray-100 p-4 rounded-md shadow" />
-                </div>
-            </main>
-            <Footer className="w-full bg-gray-200 text-center p-4" />
-        </div>
-    );
+  return (
+    <div className="flex flex-col min-h-screen bg-white">
+      <header className="sticky top-0 bg-gray-800 text-white p-4 flex justify-between items-center">
+        <div className="logo">Company Logo</div>
+        <div className="user-profile-menu">User Profile</div>
+      </header>
+      
+      <main className="flex-1 p-4 space-y-4">
+        <JobPostingForm />
+        <JobPostSuccessNotification />
+        <JobListingManager />
+      </main>
+      
+      <footer className="bg-gray-800 text-white p-4">
+        <div className="footer-content">Footer Content</div>
+      </footer>
+    </div>
+  );
 };
-
-export default EmployerDashboard;
