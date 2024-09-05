@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import JobListing, JobApplication
-from .serializers import JobListingSerializer, JobApplicationSerializer
+from .models import JobListing, JobApplication, Notification
+from .serializers import JobListingSerializer, JobApplicationSerializer, NotificationSerializer
 
 class JobListingCreateView(APIView):
     def post(self, request):
@@ -71,7 +71,12 @@ class JobApplicationSubmitView(APIView):
         job_listing = JobListing.objects.get(id=job_id)
         serializer = JobApplicationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(job_listing=job_listing)
+            application = serializer.save(job_listing=job_listing)
+            # Create a notification for the employer
+            Notification.objects.create(
+                employer=job_listing.employer,
+                message=f'New application received for {job_listing.title}',
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,3 +85,19 @@ class CandidateApplicationHistoryView(APIView):
         applications = JobApplication.objects.filter(candidate_id=candidate_id)
         serializer = JobApplicationSerializer(applications, many=True)
         return Response(serializer.data)
+
+class NotificationListView(APIView):
+    def get(self, request, employer_id):
+        notifications = Notification.objects.filter(employer_id=employer_id)
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data)
+
+class NotificationReadView(APIView):
+    def patch(self, request, employer_id, notification_id):
+        try:
+            notification = Notification.objects.get(id=notification_id, employer_id=employer_id)
+            notification.is_read = True
+            notification.save()
+            return Response({'success': 'Notification marked as read'}, status=status.HTTP_200_OK)
+        except Notification.DoesNotExist:
+            return Response({'error': 'Notification not found'}, status=status.HTTP_404_NOT_FOUND)

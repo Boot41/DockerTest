@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import JobListingCreateView, JobListingListView, JobSearchView, JobDetailView, AdminJobListingView, AdminJobStatusUpdateView, JobApplicationSubmitView, CandidateApplicationHistoryView
+from .views import JobListingCreateView, JobListingListView, JobSearchView, JobDetailView, AdminJobListingView, AdminJobStatusUpdateView, JobApplicationSubmitView, CandidateApplicationHistoryView, NotificationListView, NotificationReadView
 
 urlpatterns = [
     path('api/jobs', JobListingCreateView.as_view(), name='create_job'),
@@ -10,4 +10,6 @@ urlpatterns = [
     path('api/admin/jobs/<int:job_id>/status', AdminJobStatusUpdateView.as_view(), name='admin_update_job_status'),
     path('api/jobs/<int:job_id>/apply', JobApplicationSubmitView.as_view(), name='apply_for_job'),
     path('api/candidates/<int:candidate_id>/applications', CandidateApplicationHistoryView.as_view(), name='candidate_applications'),
+    path('api/employers/<int:employer_id>/notifications', NotificationListView.as_view(), name='list_notifications'),
+    path('api/employers/<int:employer_id>/notifications/<int:notification_id>/read', NotificationReadView.as_view(), name='mark_notification_read'),
 ]
