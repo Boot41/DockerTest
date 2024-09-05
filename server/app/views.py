@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import JobListing
-from .serializers import JobListingSerializer
+from .models import JobListing, JobApplication
+from .serializers import JobListingSerializer, JobApplicationSerializer
 
 class JobListingCreateView(APIView):
     def post(self, request):
@@ -65,3 +65,18 @@ class AdminJobStatusUpdateView(APIView):
             return Response({'error': 'Status not provided'}, status=status.HTTP_400_BAD_REQUEST)
         except JobListing.DoesNotExist:
             return Response({'error': 'Job not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class JobApplicationSubmitView(APIView):
+    def post(self, request, job_id):
+        job_listing = JobListing.objects.get(id=job_id)
+        serializer = JobApplicationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(job_listing=job_listing)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CandidateApplicationHistoryView(APIView):
+    def get(self, request, candidate_id):
+        applications = JobApplication.objects.filter(candidate_id=candidate_id)
+        serializer = JobApplicationSerializer(applications, many=True)
+        return Response(serializer.data)
