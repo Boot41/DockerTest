@@ -16,7 +16,7 @@ function App() {
           <nav>
             <Link to="/">Home</Link>
             <Link to="/employer-dashboard">Employer Dashboard</Link>
-            <Link to="/candidate-dashboard">Candidate Dashboard</Link>
+            <Link to="/candidate-dashboard">Candidate Dashboard</Link> {/* Added navigation link for CandidateDashboard */}
             <Link to="/job-search-results">Job Search Results</Link>
             <Link to="/job-details">Job Details</Link> {/* Adding navigation link for JobDetailsPage */}
             <Link to="/admin-dashboard">Admin Dashboard</Link> {/* Adding navigation link for AdminDashboard */}
