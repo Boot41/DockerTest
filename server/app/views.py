@@ -43,3 +43,25 @@ class JobDetailView(APIView):
             return Response(serializer.data)
         except JobListing.DoesNotExist:
             return Response({'error': 'Job not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class AdminJobListingView(APIView):
+    def get(self, request):
+        status_filter = request.query_params.get('status', None)
+        job_listings = JobListing.objects.all()
+        if status_filter:
+            job_listings = job_listings.filter(status=status_filter)
+        serializer = JobListingSerializer(job_listings, many=True)
+        return Response(serializer.data)
+
+class AdminJobStatusUpdateView(APIView):
+    def patch(self, request, job_id):
+        try:
+            job_listing = JobListing.objects.get(id=job_id)
+            status = request.data.get('status')
+            if status:
+                job_listing.status = status
+                job_listing.save()
+                return Response({'success': 'Job status updated'}, status=status.HTTP_200_OK)
+            return Response({'error': 'Status not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        except JobListing.DoesNotExist:
+            return Response({'error': 'Job not found'}, status=status.HTTP_404_NOT_FOUND)
